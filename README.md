@@ -1,4 +1,5 @@
 Writen solely by spacebyte and upio. With help from Github Copilot.
+upio wrote the current authentication class!!
 
 # MCPClientBrowserAuth
 Browser Authentication Services for Minecraft Clients and Mods.
