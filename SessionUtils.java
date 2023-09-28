@@ -16,18 +16,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
-
 import com.mojang.authlib.GameProfile;
-
-import fr.litarvan.openauth.microsoft.MicrosoftAuthResult;
-import fr.litarvan.openauth.microsoft.MicrosoftAuthenticationException;
-import fr.litarvan.openauth.microsoft.MicrosoftAuthenticator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
-
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
