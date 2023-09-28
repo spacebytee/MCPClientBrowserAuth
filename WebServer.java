@@ -14,8 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.bytespacegames.teapotclient.UI.GuiLogin;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -50,8 +48,6 @@ public class WebServer {
 				code = queryParams.get("code");
 				t.sendResponseHeaders(200, successMsg.length());
 				bytes = successMsg.getBytes();
-				
-				GuiLogin.login.lastResult = SessionUtils.recieveResponse(code);
 			} else {
 				t.sendResponseHeaders(418,error.length());
 				bytes = error.getBytes();
