@@ -1,6 +1,8 @@
 Writen solely by spacebyte and upio. With help from Github Copilot.
 upio wrote the current authentication class!!
 
+This library supports Java 8!!
+
 # MCPClientBrowserAuth
 Browser Authentication Services for Minecraft Clients and Mods.
 
