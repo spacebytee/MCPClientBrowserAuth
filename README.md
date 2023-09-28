@@ -1,3 +1,5 @@
+Writen solely by spacebyte and upio. With help from Github Copilot.
+
 # MCPClientBrowserAuth
 Browser Authentication Services for Minecraft Clients and Mods.
 
