@@ -65,10 +65,10 @@ public class SessionUtils {
 
 	public static String recieveResponse(String code) {
 		try {
-			String accessToken = new SkiddedAuth().retrieveRefreshToken(code,recentPkce);
+			String accessToken = new Authentication().retrieveRefreshToken(code,recentPkce);
 			System.out.println("ref token "+accessToken);
 			
-			JsonObject loginProfileInfo = SkiddedAuth.getAccountInfo(accessToken);
+			JsonObject loginProfileInfo = Authentication.getAccountInfo(accessToken);
 			String name = loginProfileInfo.getString("name");
             String id = loginProfileInfo.getString("id");
 			System.out.println("login profile info "+loginProfileInfo + "name "+name+" id "+id);
