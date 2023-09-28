@@ -1,4 +1,4 @@
-package com.bytespacegames.teapotclient.Utils;
+package com.bytespacegames.mcpauth;
 
 import java.io.BufferedReader;
 import java.io.IOException;
