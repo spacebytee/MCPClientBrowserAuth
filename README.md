@@ -1,27 +1,31 @@
-Writen solely by spacebyte and upio. With help from Github Copilot.
-upio wrote the current authentication class!!
-
-This library supports Java 8!!
-
 # MCPClientBrowserAuth
 Browser Authentication Services for Minecraft Clients and Mods.
+This supports Java 8! (unlike openauth)
+
+
+Writen solely by spacebyte and upio.
+upio wrote the current authentication class using github copilot & microsoft auth docs.
 
 ## How To Use
-The authentication works via a multi-step process
+Use the code below to login using browser:
+```java
+import com.bytespacegames.mcpauth
 
-* SessionUtils is invoked, this will begin a web server, and prompt a login page in the users browser.
-* When the login is finished, the webserver will pick it up via the redirect uri, and the web server will close.
-* The SessionUtils will reach out to Authentication to hook into Microsoft servers to return the Minecraft access token
-* SessionUtils will use that access token, and get the Minecraft profile info to create a session and login.
+try {
+  SessionUtils.tryLoginBrowser();
+} catch (IOException e) {
+  e.printStackTrace();
+} catch (URISyntaxException e) {
+  e.printStackTrace();
+}
+```
 
-# Specifics
-If you only need certain parts, or would like to replace our code, here are some vague documentation on how to use it
+## NOTE
+Please note that you may need to go in WebServer.java and modify these lines of code to change status text on your GUI or print the status text:<br>
+![image](https://github.com/notpoiu/MCPClientBrowserAuth/assets/75510171/ab5b5661-2488-4c2d-bb47-4f7e121127b5)
 
-## SessionUtils.tryLoginBrowser()
-This will complete the whole process, if possible. It will begin the webserver and prompt for login. If successful, it will fully switch the session to the logged in user.
+## Contributing
+Make a pull request
 
-## Authentication.retrieveAccessToken(String mscode, String recentPkce)
-This will return the Minecraft access token, given you provide the MSA authentication code, and a pkce code to use for interacting with Microsoft APIs. This will complete the whole process of reaching out to Microsoft, Xbox, and Minecraft APIs.
-
-## WebServer.initWebServer()
-This will initialize the WebServer, if successful, it will return to SessionUtils.recieveResponse(code) to handle the MSA code.
+## Credits
+Credits would be appreciated but are **NOT REQUIRED**
