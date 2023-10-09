@@ -22,16 +22,20 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 public class Authentication {
-    private static final String CLIENT_ID = "e5785f8b-29f1-477a-b758-d4c15b565c9e";
-    private static final String CLIENT_SECRET = "HIDDEN FOR SECURITY PURPOSES";
+    
+    // we are using essential's client id as we need to apply for a forum so minecraft verifies your azure app client id, so to prevent that process we are using a one that is allready accepted
+    private static final String CLIENT_ID = "e39cc675-eb52-4475-b5f8-82aaae14eeba";
     private static final String REDIRECT_URI = "http://localhost:6921/microsoft/complete";
 
-    public Authentication() {
-    }
-    
+    /**
+     * Retreives a minecraft access token that is then returned back as a String
+     *
+     * @param mscode       The microsoft code provided by our WebServer
+     * @param recentPkce   The pkce/Proof Key for Code Exchange that we generated earlier
+    */
     public String retrieveAccessToken(String mscode, String recentPkce) {
     	try {
-    		// Create a HttpClient to send a POST request to the token endpoint
+    		// This sends a POST request to get microsoft account's token
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI("https://login.live.com/oauth20_token.srf"))
@@ -42,19 +46,18 @@ public class Authentication {
                     "&scope=Xboxlive.signin+Xboxlive.offline_access" +
                     "&code_verifier=" + recentPkce +
                     "&redirect_uri=http://localhost:6921/microsoft/complete" +
-                    "&grant_type=authorization_code" +
-                    "&client_secret=" + CLIENT_SECRET))
+                    "&grant_type=authorization_code"))
                 .build();
-
-            // Send the request and get the response
+            
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             JsonReader jsonReader = Json.createReader(new StringReader(response.body()));
             JsonObject jsonObject = jsonReader.readObject();
             jsonReader.close();
-            
+
+            // Retreive ms account token, this will be useful to login to xbox
             String accessTokenToLive = jsonObject.getString("access_token");
             
-            // Create a HttpClient to send a POST request to the xbox live endpoint
+            // This sends a POST request to xboxlive.com to retreive the user's xbox live token, this is used to get the xsts token
             client = HttpClient.newHttpClient();
             request = HttpRequest.newBuilder()
                 .uri(new URI("https://user.auth.xboxlive.com/user/authenticate"))
@@ -63,23 +66,21 @@ public class Authentication {
                 .POST(HttpRequest.BodyPublishers.ofString(
                     "{\"Properties\":{\"AuthMethod\":\"RPS\",\"SiteName\":\"user.auth.xboxlive.com\",\"RpsTicket\":\"d=" + accessTokenToLive + "\"},\"RelyingParty\":\"http://auth.xboxlive.com\",\"TokenType\":\"JWT\"}"))
                 .build();
-
-            // Send the request and get the response
+            
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             jsonReader = Json.createReader(new StringReader(response.body()));
             jsonObject = jsonReader.readObject();
             jsonReader.close();
 
+            // Store xbl auth token & user hash
             String xblAuthToken = jsonObject.getString("Token");
-            
-            
             String userHashString = jsonObject
             		.getJsonObject("DisplayClaims")
             	    .getJsonArray("xui")
             	    .getJsonObject(0)
             	    .getString("uhs");
 
-            // Create a HttpClient to send a POST request to the xbox live endpoint (https://xsts.auth.xboxlive.com/xsts/authorize) to get the xsts token
+            // This sends a POST request xboxlive.com in order to retreive the xsts token
             client = HttpClient.newHttpClient();
             request = HttpRequest.newBuilder()
                 .uri(new URI("https://xsts.auth.xboxlive.com/xsts/authorize"))
@@ -89,16 +90,15 @@ public class Authentication {
                     "{\"Properties\":{\"SandboxId\":\"RETAIL\",\"UserTokens\":[\"" + xblAuthToken + "\"]},\"RelyingParty\":\"rp://api.minecraftservices.com/\",\"TokenType\":\"JWT\"}"))
                 .build();
             
-            // Send the request and get the response
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             jsonReader = Json.createReader(new StringReader(response.body()));
             jsonObject = jsonReader.readObject();
             jsonReader.close();
 
+            // Store xsts token for the final step
             String xstsToken = jsonObject.getString("Token");
-            System.out.println(xstsToken);
 
-            // Create a HttpClient to send a POST request to the xbox live endpoint (https://api.minecraftservices.com/authentication/login_with_xbox) to get the minecraft access token
+            // This sends a request to minecraftservices.com in order to get the final access token to minecraft, this access token lasts 24 hours
             client = HttpClient.newHttpClient();
             request = HttpRequest.newBuilder()
                 .uri(new URI("https://api.minecraftservices.com/authentication/login_with_xbox"))
@@ -107,14 +107,12 @@ public class Authentication {
                     "{\"identityToken\":\"XBL3.0 x=" + userHashString + ";" + xstsToken + "\",\"ensureLegacyEnabled\":\"true\"}"))
                 .build();
             
-            // Send the request and get the response
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
-            // Parse JSON response
             jsonReader = Json.createReader(new StringReader(response.body()));
             jsonObject = jsonReader.readObject();
             jsonReader.close();
 
+            // We got the access token!
             String minecraftAccessToken = jsonObject.getString("access_token");
             return minecraftAccessToken;
     	} catch (Exception e) {
@@ -122,13 +120,13 @@ public class Authentication {
     	}
     }
     
+    /**
+     * Fetches account info. Needed for the new session instance. This returns the JSON data that got returned after the GET request.
+     *
+     * @param accessToken  Minecraft authentication token provided from the retrieveAccessToken() function
+    */
     public static JsonObject getAccountInfo(String accessToken){
-
-        // send GET request to the https://api.minecraftservices.com/minecraft/profile endpoint with this in headers: {"Authorization": "Bearer " + accessToken}
-        // if the response code is 200, parse the response body as JSON and return the "name" and "id" fields
-        // if the response code is not 200, return "balls"
-
-        // Create a HttpClient to send a POST request to the token endpoint
+        // This creates the request body needed in order to fetch the account info
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create("https://api.minecraftservices.com/minecraft/profile"))
@@ -136,14 +134,16 @@ public class Authentication {
             .GET()
             .build();
         
-        // Send the request and get the response
+        // We to send the request & if it throws an error, return null, if it does not then return the request response
         try {
+            // Send the request
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
+
+            // Read & parse the json data provided, this is where it could error
             JsonReader jsonReader = Json.createReader(new StringReader(response.body()));
             JsonObject jsonObject = jsonReader.readObject();
             jsonReader.close();
-
+            
             return jsonObject;
         } catch (Exception e) {
             return null;
