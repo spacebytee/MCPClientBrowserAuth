@@ -80,16 +80,14 @@ public class SessionUtils {
         */
 	public static String recieveResponse(String code) {
 		try {
-			String accessToken = new Authentication().retrieveRefreshToken(code,recentPkce);
-			System.out.println("ref token "+accessToken);
-			
+			String accessToken = new Authentication().retrieveRefreshToken(code,recentPkce);			
 			JsonObject loginProfileInfo = Authentication.getAccountInfo(accessToken);
+			
 			String name = loginProfileInfo.getString("name");
             		String id = loginProfileInfo.getString("id");
-			System.out.println("login profile info "+loginProfileInfo + "name "+name+" id "+id);
 			
-			setSession(new Session(name, id, accessToken,
-					"legacy"));
+			setSession(new Session(name, id, accessToken, "legacy"));
+			
 			return "Logged in successfully as " + name +"!";
 		} catch (Exception e) {
 			e.printStackTrace();
