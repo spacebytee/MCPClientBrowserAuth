@@ -24,7 +24,7 @@ import javax.json.JsonReader;
 public class Authentication {
     
     // we are using essential's client id as we need to apply for a forum so minecraft verifies your azure app client id, so to prevent that process we are using a one that is allready accepted
-    private static final String CLIENT_ID = "e39cc675-eb52-4475-b5f8-82aaae14eeba";
+    public static final String CLIENT_ID = "e39cc675-eb52-4475-b5f8-82aaae14eeba";
     private static final String REDIRECT_URI = "http://localhost:6921/microsoft/complete";
 
     /**
