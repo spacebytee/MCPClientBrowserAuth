@@ -26,10 +26,23 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 public class SessionUtils {
+
+	static String recentPkce;
+	
+	/**
+         * Sets the minecraft session to the provided argument session
+         *
+         * @param session      Session instance from net.minecraft.util.Session
+        */
 	public static void setSession(Session session) {
 		Minecraft.getMinecraft().session = session;
 	}
-
+	
+	/**
+        * Generates Proof Key for Code Exchange or a PKCE
+        *
+	* @return random PKCE
+        */
 	public static String generatePKCE() {
 		SecureRandom secureRandom = new SecureRandom();
 		byte[] codeVerifierBytes = new byte[32];
@@ -39,23 +52,32 @@ public class SessionUtils {
 		return codeVerifier;
 	}
 
-	static String recentPkce;
-
+	
+	/**
+        * Tries to login using browser
+        */
 	public static void tryLoginBrowser() throws IOException, URISyntaxException {
 		recentPkce = generatePKCE();
+		
 		WebServer.initWebServer();
 		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
 			Desktop.getDesktop()
 					.browse(new URI("https://login.live.com/oauth20_authorize.srf?"
-							+ "client_id=e5785f8b-29f1-477a-b758-d4c15b565c9e" + "&prompt=select_account"
+							+ "client_id=" + Authentication.CLIENT_ID + "&prompt=select_account"
 							+ "&scope=Xboxlive.signin+Xboxlive.offline_access" + "&code_challenge_method=S256"
 							+ "&code_challenge=" + Base64.encodeBase64URLSafeString(DigestUtils.sha256(recentPkce))
-							+ "&response_type=code" + "&redirect_uri=http://localhost:6921/microsoft/complete"));
+							+ "&response_type=code" + "&redirect_uri=" + Authentication.REDIRECT_URI));
 		} else {
 			WebServer.server.stop(0);
 		}
 	}
 
+	/**
+        * Called when the webserver got the response with the code.
+	* 
+	* @param code          the code provided from login.live.com/oauth20_authorize.srf
+	* @return A status string you can put on your GUI
+        */
 	public static String recieveResponse(String code) {
 		try {
 			String accessToken = new Authentication().retrieveRefreshToken(code,recentPkce);
@@ -63,7 +85,7 @@ public class SessionUtils {
 			
 			JsonObject loginProfileInfo = Authentication.getAccountInfo(accessToken);
 			String name = loginProfileInfo.getString("name");
-            String id = loginProfileInfo.getString("id");
+            		String id = loginProfileInfo.getString("id");
 			System.out.println("login profile info "+loginProfileInfo + "name "+name+" id "+id);
 			
 			setSession(new Session(name, id, accessToken,
@@ -71,7 +93,7 @@ public class SessionUtils {
 			return "Logged in successfully as " + name +"!";
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "Could not log-in. idk what to tell you bruh";
+			return "Could not log-in. Please check console!";
 		}
 	}
 }
