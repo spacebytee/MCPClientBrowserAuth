@@ -30,7 +30,7 @@ public class SessionUtils {
 	static String recentPkce;
 	
 	/**
-         * Sets the minecraft session to the provided argument session
+         * Sets the minecraft session to the provided argument session, you may need to set "session" to public
          *
          * @param session      Session instance from net.minecraft.util.Session
         */
@@ -55,6 +55,9 @@ public class SessionUtils {
 	
 	/**
         * Tries to login using browser
+	* 
+	* @throws IOException If an I/O error occurs during the process.
+ 	* @throws URISyntaxException If an URI Syntax error occurs during the process.
         */
 	public static void tryLoginBrowser() throws IOException, URISyntaxException {
 		recentPkce = generatePKCE();
