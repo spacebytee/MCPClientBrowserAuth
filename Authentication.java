@@ -28,10 +28,10 @@ public class Authentication {
     public static final String REDIRECT_URI = "http://localhost:6921/microsoft/complete";
 
     /**
-     * Retreives a minecraft access token that is then returned back as a String
-     *
-     * @param mscode       The microsoft code provided by our WebServer
-     * @param recentPkce   The pkce/Proof Key for Code Exchange that we generated earlier
+    * Retreives a minecraft access token that is then returned back as a String
+    *
+    * @param mscode       The microsoft code provided by our WebServer
+    * @param recentPkce   The pkce/Proof Key for Code Exchange that we generated earlier
     */
     public String retrieveAccessToken(String mscode, String recentPkce) {
     	try {
@@ -121,9 +121,9 @@ public class Authentication {
     }
     
     /**
-     * Fetches account info. Needed for the new session instance. This returns the JSON data that got returned after the GET request.
-     *
-     * @param accessToken  Minecraft authentication token provided from the retrieveAccessToken() function
+    * Fetches account info. Needed for the new session instance. This returns the JSON data that got returned after the GET request.
+    *
+    * @param accessToken  Minecraft authentication token provided from the retrieveAccessToken() function
     */
     public static JsonObject getAccountInfo(String accessToken){
         // This creates the request body needed in order to fetch the account info
