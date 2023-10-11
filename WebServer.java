@@ -1,4 +1,4 @@
-package com.bytespacegames.mcpauth;
+package dev.upio.tidalwave.utils.auth;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -68,8 +68,8 @@ public class WebServer {
                 bytes = successMsg.getBytes();
 
                 // You can change this to change the status text inside your auth GUI
-                // GuiLogin.login.lastResult = SessionUtils.receiveResponse(code);
-                SessionUtils.receiveResponse(code);
+                // GuiLogin.login.lastResult = SessionUtils.recieveResponse(code);
+                SessionUtils.recieveResponse(code);
             } else {
                 t.sendResponseHeaders(418, error.length());
                 bytes = error.getBytes();
