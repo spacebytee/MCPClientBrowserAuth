@@ -1,4 +1,4 @@
-package dev.upio.tidalwave.utils.http;
+package dev.upio.mcpauth.utils.http;
 
 public class BodyPublisher {
     String body;
