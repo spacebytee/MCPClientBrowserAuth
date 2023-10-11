@@ -10,9 +10,6 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +18,10 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
+import dev.upio.tidalwave.utils.http.HttpClient;
+import dev.upio.tidalwave.utils.http.HttpRequest;
+import dev.upio.tidalwave.utils.http.HttpResponse;
+
 public class Authentication {
     
     // we are using essential's client id as we need to apply for a forum so minecraft verifies your azure app client id, so to prevent that process we are using a one that is allready accepted
@@ -28,10 +29,10 @@ public class Authentication {
     public static final String REDIRECT_URI = "http://localhost:6921/microsoft/complete";
 
     /**
-     * Retreives a minecraft access token that is then returned back as a String
-     *
-     * @param mscode       The microsoft code provided by our WebServer
-     * @param recentPkce   The pkce/Proof Key for Code Exchange that we generated earlier
+    * Retreives a minecraft access token that is then returned back as a String
+    *
+    * @param mscode       The microsoft code provided by our WebServer
+    * @param recentPkce   The pkce/Proof Key for Code Exchange that we generated earlier
     */
     public String retrieveAccessToken(String mscode, String recentPkce) {
     	try {
@@ -49,7 +50,7 @@ public class Authentication {
                     "&grant_type=authorization_code"))
                 .build();
             
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse response = client.send(request);
             JsonReader jsonReader = Json.createReader(new StringReader(response.body()));
             JsonObject jsonObject = jsonReader.readObject();
             jsonReader.close();
@@ -67,7 +68,7 @@ public class Authentication {
                     "{\"Properties\":{\"AuthMethod\":\"RPS\",\"SiteName\":\"user.auth.xboxlive.com\",\"RpsTicket\":\"d=" + accessTokenToLive + "\"},\"RelyingParty\":\"http://auth.xboxlive.com\",\"TokenType\":\"JWT\"}"))
                 .build();
             
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            response = client.send(request);
             jsonReader = Json.createReader(new StringReader(response.body()));
             jsonObject = jsonReader.readObject();
             jsonReader.close();
@@ -90,7 +91,7 @@ public class Authentication {
                     "{\"Properties\":{\"SandboxId\":\"RETAIL\",\"UserTokens\":[\"" + xblAuthToken + "\"]},\"RelyingParty\":\"rp://api.minecraftservices.com/\",\"TokenType\":\"JWT\"}"))
                 .build();
             
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            response = client.send(request);
             jsonReader = Json.createReader(new StringReader(response.body()));
             jsonObject = jsonReader.readObject();
             jsonReader.close();
@@ -107,7 +108,7 @@ public class Authentication {
                     "{\"identityToken\":\"XBL3.0 x=" + userHashString + ";" + xstsToken + "\",\"ensureLegacyEnabled\":\"true\"}"))
                 .build();
             
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            response = client.send(request);
             jsonReader = Json.createReader(new StringReader(response.body()));
             jsonObject = jsonReader.readObject();
             jsonReader.close();
@@ -121,9 +122,9 @@ public class Authentication {
     }
     
     /**
-     * Fetches account info. Needed for the new session instance. This returns the JSON data that got returned after the GET request.
-     *
-     * @param accessToken  Minecraft authentication token provided from the retrieveAccessToken() function
+    * Fetches account info. Needed for the new session instance. This returns the JSON data that got returned after the GET request.
+    *
+    * @param accessToken  Minecraft authentication token provided from the retrieveAccessToken() function
     */
     public static JsonObject getAccountInfo(String accessToken){
         // This creates the request body needed in order to fetch the account info
@@ -137,7 +138,7 @@ public class Authentication {
         // We to send the request & if it throws an error, return null, if it does not then return the request response
         try {
             // Send the request
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse response = client.send(request);
 
             // Read & parse the json data provided, this is where it could error
             JsonReader jsonReader = Json.createReader(new StringReader(response.body()));

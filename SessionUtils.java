@@ -30,19 +30,19 @@ public class SessionUtils {
 	static String recentPkce;
 	
 	/**
-         * Sets the minecraft session to the provided argument session, you may need to set "session" to public
-         *
-         * @param session      Session instance from net.minecraft.util.Session
-        */
+    * Sets the minecraft session to the provided argument session, you may need to set "session" to public
+    *
+    * @param session      Session instance from net.minecraft.util.Session
+    */
 	public static void setSession(Session session) {
 		Minecraft.getMinecraft().session = session;
 	}
 	
 	/**
-        * Generates Proof Key for Code Exchange or a PKCE
-        *
+    * Generates Proof Key for Code Exchange or a PKCE
+    *
 	* @return random PKCE
-        */
+    */
 	public static String generatePKCE() {
 		SecureRandom secureRandom = new SecureRandom();
 		byte[] codeVerifierBytes = new byte[32];
@@ -54,11 +54,11 @@ public class SessionUtils {
 
 	
 	/**
-        * Tries to login using browser
+	* Tries to login using browser
 	* 
 	* @throws IOException If an I/O error occurs during the process.
  	* @throws URISyntaxException If an URI Syntax error occurs during the process.
-        */
+    */
 	public static void tryLoginBrowser() throws IOException, URISyntaxException {
 		recentPkce = generatePKCE();
 		
@@ -76,14 +76,14 @@ public class SessionUtils {
 	}
 
 	/**
-        * Called when the webserver got the response with the code.
+    * Called when the webserver got the response with the code.
 	* 
 	* @param code          the code provided from login.live.com/oauth20_authorize.srf
 	* @return A status string you can put on your GUI
-        */
+    */
 	public static String recieveResponse(String code) {
 		try {
-			String accessToken = new Authentication().retrieveRefreshToken(code,recentPkce);			
+			String accessToken = new Authentication().retrieveAccessToken(code,recentPkce);			
 			JsonObject loginProfileInfo = Authentication.getAccountInfo(accessToken);
 			
 			String name = loginProfileInfo.getString("name");
