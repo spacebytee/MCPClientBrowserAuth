@@ -1,4 +1,4 @@
-package dev.upio.tidalwave.utils.auth;
+package com.bytespacegames.mcpauth;
 
 import java.io.BufferedReader;
 import java.io.IOException;
