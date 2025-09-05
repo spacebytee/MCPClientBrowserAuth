@@ -11,6 +11,7 @@ you may need these jars as dependencies (you can download them using these downl
 https://cdn.upio.dev/assets/http-20070405.jar<br>
 https://cdn.upio.dev/assets/javax.json-1.0.jar
 
+# Maven
 ```xml
         <dependency>
             <groupId>javax.json</groupId>
@@ -22,13 +23,7 @@ https://cdn.upio.dev/assets/javax.json-1.0.jar
             <artifactId>http</artifactId>
             <version>20070405</version>
         </dependency>
-        ```
-
-As for maven or gradle, we are unsure of how to implement these so please dm us so we can include it in the readme<br>
-- spacebyte
-- upio
-
-OR you can make a pull request with modifications to the README
+```
 
 ## How To Use
 Use the code below to login using browser:
@@ -41,7 +36,6 @@ try {
   e.printStackTrace();
 } catch (URISyntaxException e) {
   e.printStackTrace();
-}
 ```
 
 ## NOTE
