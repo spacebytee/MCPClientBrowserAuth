@@ -11,6 +11,19 @@ you may need these jars as dependencies (you can download them using these downl
 https://cdn.upio.dev/assets/http-20070405.jar<br>
 https://cdn.upio.dev/assets/javax.json-1.0.jar
 
+```xml
+        <dependency>
+            <groupId>javax.json</groupId>
+            <artifactId>javax.json-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.net.httpserver</groupId>
+            <artifactId>http</artifactId>
+            <version>20070405</version>
+        </dependency>
+        ```
+
 As for maven or gradle, we are unsure of how to implement these so please dm us so we can include it in the readme<br>
 - spacebyte
 - upio
